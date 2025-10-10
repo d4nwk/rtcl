@@ -1,26 +1,84 @@
+/* Tailwind v4 entry */
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --rail-left: 16px;
+  --reader-top: 52px;
+}
+.container {
+  max-width: 1200px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Rails */
+.hscroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--rail-left);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hscroll::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
+  background: transparent;
+}
+.hitem {
+  scroll-snap-align: start;
+}
+.bleed-x {
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: var(--rail-left);
+  padding-right: var(--rail-left);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Hero greeting clearance */
+#recWindow {
+  --greet-offset: 72px;
+}
+.rec-content {
+  padding-top: var(--greet-offset);
+}
+
+/* Reader: word highlight + popover (mobile only) */
+.word-hl {
+  background: #fff3bf;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+#defPopover {
+  position: absolute;
+  z-index: 60;
+  max-width: 28rem;
+  background: white;
+  border: 1px solid rgb(229 231 235);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Reader layout (desktop) */
+#readerGrid {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr) 320px;
+  gap: 1.25rem;
+}
+@media (max-width: 1023px) {
+  #readerGrid {
+    display: block;
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.reader-sticky {
+  position: sticky;
+  top: var(--reader-top);
+  align-self: start;
+}
+.reader-def-panel {
+  min-height: calc(100vh - var(--reader-top));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
