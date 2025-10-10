@@ -1,4 +1,3 @@
-/* Tailwind v4 entry */
 @import "tailwindcss";
 
 :root {
@@ -9,7 +8,6 @@
   max-width: 1200px;
 }
 
-/* Rails */
 .hscroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -34,7 +32,6 @@
   padding-right: var(--rail-left);
 }
 
-/* Hero greeting clearance */
 #recWindow {
   --greet-offset: 72px;
 }
@@ -42,7 +39,6 @@
   padding-top: var(--greet-offset);
 }
 
-/* Reader: word highlight + popover (mobile only) */
 .word-hl {
   background: #fff3bf;
   border-radius: 4px;
@@ -60,7 +56,6 @@
   font-size: 0.875rem;
 }
 
-/* Reader layout (desktop) */
 #readerGrid {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr) 320px;

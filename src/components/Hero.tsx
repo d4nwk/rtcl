@@ -43,7 +43,6 @@ export default function Hero({ items, onOpen, userName }:{
           ))}
         </div>
 
-        {/* overlays */}
         <div className="pointer-events-none absolute inset-0 grid grid-cols-1 md:grid-cols-5">
           <div className="col-start-1 col-span-1 md:col-span-3 relative">
             <Greeting name={userName}/>

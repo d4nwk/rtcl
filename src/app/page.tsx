@@ -66,7 +66,6 @@ export default function Page() {
 
   const recs = items.slice(0,3);
 
-  // label for language button (matches your rule)
   const langLabel = (() => {
     const arr = Array.from(selectedLangs);
     const first = LANG_ORDER.find(k => arr.includes(k)) || arr[0] || "en";
@@ -76,7 +75,6 @@ export default function Page() {
 
   return (
     <>
-      {/* Top Bar */}
       <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/80 backdrop-blur">
         <nav className="container mx-auto flex items-center justify-between px-4 py-3">
           <a href="#feed" className="inline-flex items-center">
@@ -85,20 +83,16 @@ export default function Page() {
             <span className="font-semibold tracking-tight">, ctrl language</span>
           </a>
           <div className="hidden items-center gap-3 md:flex">
-            {/* Make these the same height as controls */}
             <button className="rounded-xl border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-100">Sign in</button>
             <a href="#" className="rounded-xl bg-neutral-900 px-3 py-1.5 text-sm text-white hover:opacity-90">Open app</a>
           </div>
         </nav>
       </header>
 
-      {/* Feed */}
       <section id="feed" className="bg-neutral-100 py-8">
         <div id="pageContainer" className="container mx-auto px-4">
-          {/* Greeting + Recommended */}
           <Hero items={recs} onOpen={setOpen} userName={USER_NAME} />
 
-          {/* Header + Controls */}
           <div className="flex items-center justify-between gap-4">
             <h2 id="topStoriesHeader" className="text-2xl font-semibold tracking-tight md:text-3xl">Browse rtcls</h2>
             <div className="flex items-center gap-2">
@@ -107,7 +101,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Groups */}
           <div className="mt-6 space-y-12">
             {groups.map((g, i)=> <CardRail key={i} label={g.label} items={g.items} onOpen={setOpen} />)}
           </div>
@@ -115,7 +108,6 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-neutral-200 bg-white">
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-6 md:flex-row">
           <p className="text-sm text-neutral-500">© <span id="year">{new Date().getFullYear()}</span> rtcl</p>
@@ -127,7 +119,6 @@ export default function Page() {
         </div>
       </footer>
 
-      {/* Reader modal (simplified) */}
       <Reader item={open} onClose={()=>setOpen(null)} />
     </>
   );
