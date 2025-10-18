@@ -89,7 +89,7 @@ export default function Page() {
         </nav>
       </header>
 
-      <section id="feed" className="bg-neutral-100 py-8">
+      <section id="feed" className="bg-transparent py-8">
         <div id="pageContainer" className="container mx-auto px-4">
           <Hero items={recs} onOpen={setOpen} userName={USER_NAME} />
 
@@ -108,7 +108,7 @@ export default function Page() {
         </div>
       </section>
 
-      <footer className="border-t border-neutral-200 bg-white">
+      <footer className="z-40 border-t border-neutral-200 bg-white/90">
         <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-6 md:flex-row">
           <p className="text-sm text-neutral-500">© <span id="year">{new Date().getFullYear()}</span> rtcl</p>
           <ul className="flex items-center gap-4 text-sm text-neutral-600">
