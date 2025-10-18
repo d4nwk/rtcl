@@ -77,3 +77,56 @@
   align-items: center;
   justify-content: center;
 }
+
+/* ===== Subtle animated background (global) ===== */
+
+.rtcl-backdrop,
+.rtcl-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;            /* sits above body background */
+  pointer-events: none;
+}
+
+/* Slow, soft conic/radial blend that gently drifts */
+.rtcl-backdrop {
+  background:
+    radial-gradient(1200px 800px at 15% 10%, rgba(255,255,255,0.28), transparent 60%),
+    radial-gradient(1000px 700px at 85% 20%, rgba(206,232,255,0.24), transparent 60%),
+    radial-gradient(900px 700px at 20% 85%, rgba(255,220,220,0.20), transparent 60%),
+    conic-gradient(from 180deg at 50% 50%, #f6f7f9, #f8fafc 25%, #f6f7f9 50%, #f8fafc 75%, #f6f7f9);
+  filter: saturate(105%);
+  animation: rtcl-drift 45s linear infinite;
+}
+
+/* Ultra-subtle grain for depth on large monitors */
+.rtcl-grain {
+  background-image: url("data:image/svg+xml;utf8,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>\
+    <filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter>\
+    <rect width='160' height='160' filter='url(%23n)' opacity='0.03'/>\
+  </svg>");
+  background-size: 160px 160px;
+  mix-blend-mode: normal;
+  opacity: .9;
+  animation: rtcl-grain-move 2.4s steps(2) infinite;
+}
+
+@keyframes rtcl-drift {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  50%  { transform: translate3d(0,-1.5%,0) scale(1.01); }
+  100% { transform: translate3d(0,0,0) scale(1); }
+}
+
+@keyframes rtcl-grain-move {
+  0%   { transform: translate3d(0,0,0); }
+  100% { transform: translate3d(-160px,-160px,0); }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .rtcl-backdrop,
+  .rtcl-grain {
+    animation: none !important;
+  }
+}
