@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
+/* === Base typography ===
+   Use Rubik everywhere by default. Do NOT force a global weight so headings
+   and utility classes (e.g., font-[600]/font-[700]) can take effect. */
+html, body {
+  font-family: var(--font-rubik), system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 400;
+}
+* { font-family: inherit; }
+
+/* Optional monospace helper (used only where needed) */
+.mono, code, pre, kbd, samp {
+  font-family: var(--font-roboto-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Keep your existing rules… */
+html, body {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+
 :root {
   --rail-left: 16px;
-  --reader-top: 52px;
+  --reader-top: 55px; /* match the 55px reader toolbar height */
+
+  /* dynamic colors set by Backdrop.tsx (with gentle defaults) */
+  --rtcl-bg1: hsl(210 40% 97%);
+  --rtcl-bg2: hsl(260 38% 96%);
+  --rtcl-bg3: hsl(340 42% 95%);
 }
-.container {
-  max-width: 1200px;
-}
+.container { max-width: 1200px; }
 
 .hscroll {
   overflow-x: auto;
@@ -16,15 +39,8 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-.hscroll::-webkit-scrollbar {
-  display: none;
-  height: 0;
-  width: 0;
-  background: transparent;
-}
-.hitem {
-  scroll-snap-align: start;
-}
+.hscroll::-webkit-scrollbar { display: none; height: 0; width: 0; background: transparent; }
+.hitem { scroll-snap-align: start; }
 .bleed-x {
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
@@ -32,89 +48,65 @@
   padding-right: var(--rail-left);
 }
 
-#recWindow {
-  --greet-offset: 72px;
-}
-.rec-content {
-  padding-top: var(--greet-offset);
-}
+#recWindow { --greet-offset: 72px; }
+.rec-content { padding-top: var(--greet-offset); }
 
-.word-hl {
-  background: #fff3bf;
-  border-radius: 4px;
-  padding: 0 2px;
-}
+.word-hl { background: #fff3bf; border-radius: 4px; padding: 0 2px; }
 #defPopover {
-  position: absolute;
-  z-index: 60;
-  max-width: 28rem;
-  background: white;
+  position: absolute; z-index: 60; max-width: 28rem; background: white;
   border: 1px solid rgb(229 231 235);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
+  border-radius: 12px; padding: 0.5rem 0.75rem; font-size: 0.875rem;
 }
 
-#readerGrid {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr) 320px;
-  gap: 1.25rem;
-}
-@media (max-width: 1023px) {
-  #readerGrid {
-    display: block;
-  }
-}
-.reader-sticky {
-  position: sticky;
-  top: var(--reader-top);
-  align-self: start;
-}
-.reader-def-panel {
-  min-height: calc(100vh - var(--reader-top));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+#readerGrid { display: grid; grid-template-columns: 280px minmax(0, 1fr) 320px; gap: 1.25rem; }
+@media (max-width: 1023px) { #readerGrid { display: block; } }
+.reader-sticky { position: sticky; top: var(--reader-top); align-self: start; }
+.reader-def-panel { min-height: calc(100vh - var(--reader-top)); display: flex; align-items: center; justify-content: center; }
 
-/* ===== Subtle animated background (global) ===== */
+/* === Transparent page so backdrop is truly a background === */
+html, body { background: transparent !important; position: relative; }
 
+/* === Subtle adaptive animated background === */
 .rtcl-backdrop,
 .rtcl-grain {
+  position: fixed; inset: 0; pointer-events: none;
+}
+
+/* Multilingual glyph overlay (above backdrop & grain, below content) */
+.rtcl-glyphs {
   position: fixed;
   inset: 0;
-  z-index: 0;            /* sits above body background */
   pointer-events: none;
+  z-index: 1; /* ensure above .rtcl-backdrop and .rtcl-grain */
+  opacity: 0.4; /* subtle but visible */
+  mix-blend-mode: multiply; /* slightly darker than bg */
 }
 
-/* Slow, soft conic/radial blend that gently drifts */
-.rtcl-backdrop {
-  background:
-    radial-gradient(1200px 800px at 15% 10%, rgba(255,255,255,0.28), transparent 60%),
-    radial-gradient(1000px 700px at 85% 20%, rgba(206,232,255,0.24), transparent 60%),
-    radial-gradient(900px 700px at 20% 85%, rgba(255,220,220,0.20), transparent 60%),
-    conic-gradient(from 180deg at 50% 50%, #f6f7f9, #f8fafc 25%, #f6f7f9 50%, #f8fafc 75%, #f6f7f9);
-  filter: saturate(105%);
-  animation: rtcl-drift 45s linear infinite;
+@media (prefers-reduced-motion: reduce) {
+  .rtcl-glyphs { display: none; }
 }
 
-/* Ultra-subtle grain for depth on large monitors */
+.rtcl-backdrop { 
+  background: #dff9f14a; /* flat subtle teal, more green than blue */
+}
+.rtcl-grain { z-index: 0; }
+
 .rtcl-grain {
   background-image: url("data:image/svg+xml;utf8,\
   <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>\
     <filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter>\
-    <rect width='160' height='160' filter='url(%23n)' opacity='0.03'/>\
+    <rect width='160' height='160' filter='url(%23n)' opacity='0.035'/>\
   </svg>");
   background-size: 160px 160px;
   mix-blend-mode: normal;
-  opacity: .9;
-  animation: rtcl-grain-move 2.4s steps(2) infinite;
+  opacity: .5;
+  animation: rtcl-grain-move 2.6s steps(2) infinite;
 }
 
 @keyframes rtcl-drift {
   0%   { transform: translate3d(0,0,0) scale(1); }
-  50%  { transform: translate3d(0,-1.5%,0) scale(1.01); }
+  50%  { transform: translate3d(0,-1.25%,0) scale(1.01); }
   100% { transform: translate3d(0,0,0) scale(1); }
 }
 
@@ -123,10 +115,25 @@
   100% { transform: translate3d(-160px,-160px,0); }
 }
 
-/* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .rtcl-backdrop,
-  .rtcl-grain {
-    animation: none !important;
-  }
+  .rtcl-backdrop, .rtcl-grain { animation: none !important; }
+}
+
+/* === Theme layers (global) === */
+/* Hint browsers to keep layers cheap when opacity/clip-path animate */
+.rtcl-theme-layer {
+  contain: paint;
+  will-change: opacity, clip-path;
+}
+
+/* Base stacking: inactive below active; previews can rise above both */
+.rtcl-theme-layer { z-index: 0; }
+.rtcl-theme-layer[data-active="1"] { z-index: 1; }
+
+/* Picker preview override: when a tile is previewing a non-active theme,
+   the picker sets data-preview="1" on that theme layer so it becomes visible
+   even if React set inline opacity to 0 on the layer. */
+.rtcl-theme-layer[data-preview="1"] {
+  opacity: 1 !important;
+  z-index: 2 !important;
 }

@@ -2,7 +2,10 @@
 
 export default function Card({ item, onOpen }:{ item:any; onOpen:(it:any)=>void }) {
   return (
-    <article className="hitem flex-none w-[360px] rounded-2xl border-2 border-transparent bg-white transition-all overflow-hidden hover:border-black">
+    <article
+      className="hitem flex-none w-[360px] rounded-2xl border bg-white transition-all overflow-hidden border-[var(--rtcl-border)] hover:border-[var(--rtcl-border-active)]"
+      style={{ borderColor: "var(--rtcl-border)" }}
+    >
       <button className="block text-left w-full" onClick={()=>onOpen(item)}>
         <div className="w-full bg-neutral-200">
           <img src={item._img} loading="lazy" referrerPolicy="no-referrer" alt="" className="h-48 w-full object-cover"/>

@@ -14,7 +14,7 @@ export default function Greeting({ name }: { name: string }) {
       <span className={color}>
         {isMorning ? <SunDim className="h-5 w-5 translate-y-[1px]" /> : isAfternoon ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
       </span>
-      <h2 id="greetText" className="text-base md:text-lg font-semibold">{label}, {name}</h2>
+      <h2 id="greetText" className="text-base md:text-lg font-[400]">{label}, {name}</h2>
     </div>
   );
 }

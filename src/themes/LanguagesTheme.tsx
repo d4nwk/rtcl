@@ -1,22 +1,38 @@
 "use client";
 
+export const LANGUAGES_THEME_STYLES = {
+  border: "hsl(170 55% 38% / 0.4)",
+  borderActive: "hsl(170 55% 38%)",
+  accent: "hsl(170 55% 38%)",
+};
+
 import React, { useEffect, useRef } from "react";
 
 /**
- * Subtle animated background that adapts to what's on screen.
- * We avoid CORS/canvas by hashing visible image src/alt into HSL hues,
- * then set CSS vars --rtcl-bg1/2/3 that the CSS gradient consumes.
+ * LanguagesTheme
+ * Animated multilingual glyphs background (opt-in via ThemeContext).
+ * Mounts fixed, below interactive content. No default side effects unless selected.
  */
-export default function Backdrop() {
+export default function LanguagesTheme() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   useEffect(() => {
+    const root = document.documentElement;
+    const isActive = root.dataset.rtclTheme === "languages";
+    if (!isActive) return;
+
     let rafGlyphs = 0;
 
-    // Fixed teal ink for glyphs
+    // Set a fixed teal ink for glyphs via CSS var
     const setInk = () => {
       document.documentElement.style.setProperty("--rtcl-ink", "hsl(170 55% 38%)");
     };
     setInk();
+
+    // Apply theme border/accent variables
+    root.style.setProperty("--rtcl-border", LANGUAGES_THEME_STYLES.border);
+    root.style.setProperty("--rtcl-border-active", LANGUAGES_THEME_STYLES.borderActive);
+    root.style.setProperty("--rtcl-accent", LANGUAGES_THEME_STYLES.accent);
 
     const startGlyphs = () => {
       const canvas = canvasRef.current;
@@ -36,17 +52,8 @@ export default function Backdrop() {
       );
 
       const step = 26; // px between glyphs
-
       const angle = -45 * Math.PI / 180; // tilt grid -45°
-      let diag = 0, cx = 0, cy = 0;     // rotated drawing extents
-
-      // Deterministic base glyph choice per global cell (col, row)
-      const pick = (cx: number, gy: number) => {
-        let v = cx * 73856093 ^ gy * 19349663 ^ 1337;
-        v = (v >>> 0) % glyphs.length;
-        return v; // index into glyphs
-      };
-
+      let diag = 0, cx = 0, cy = 0;
       let cols = 0, rows = 0;
       let DPR = Math.max(1, Math.floor(window.devicePixelRatio || 1));
 
@@ -73,16 +80,15 @@ export default function Backdrop() {
         canvas.style.width = w + "px";
         canvas.style.height = h + "px";
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
         // rotated square coverage so corners are filled
         diag = Math.hypot(w, h);
         cx = w / 2; cy = h / 2;
+
         // grid sized to rotated space (fixed to viewport; no scroll dependence)
         cols = Math.ceil(diag / step) + 4;
         rows = Math.ceil(diag / step) + 4;
       };
-
-      resize();
-      window.addEventListener("resize", resize);
 
       const draw = () => {
         const w = canvas.width / DPR;
@@ -112,16 +118,13 @@ export default function Backdrop() {
         let nextStage = stage;
 
         if (elapsed <= holdMs) {
-          // show current stage fully
           alphaA = 1; alphaB = 0; nextStage = (stage + 1) & 3;
         } else if (elapsed <= holdMs + fadeMs) {
-          // crossfade window
           const p = Math.min(1, Math.max(0, (elapsed - holdMs) / fadeMs));
           alphaA = 1 - p;
           alphaB = p;
           nextStage = (stage + 1) & 3;
         } else {
-          // advance stage and restart cycle
           stage = (stage + 1) & 3;
           stageAnchor = now;
           alphaA = 1; alphaB = 0; nextStage = (stage + 1) & 3;
@@ -162,7 +165,15 @@ export default function Backdrop() {
 
       const start = () => { rafGlyphs = requestAnimationFrame(draw); };
 
-      if ((document as any).fonts && typeof (document as any).fonts.load === 'function') {
+      // init & listeners
+      const onResize = () => {
+        // re-run resize computations before drawing again
+        resize();
+      };
+      resize();
+      window.addEventListener("resize", onResize);
+
+      if ((document as any).fonts && typeof (document as any).fonts.load === "function") {
         Promise.allSettled([
           (document as any).fonts.load("700 18px 'Rubik'"),
           (document as any).fonts.load("700 18px 'Noto Sans KR'"),
@@ -174,17 +185,23 @@ export default function Backdrop() {
       }
 
       return () => {
-        window.removeEventListener("resize", resize);
+        window.removeEventListener("resize", onResize);
         cancelAnimationFrame(rafGlyphs);
       };
     };
 
     const stop = startGlyphs();
-    return () => { cancelAnimationFrame(rafGlyphs); };
+    return () => {
+      cancelAnimationFrame(rafGlyphs);
+      root.style.removeProperty("--rtcl-border");
+      root.style.removeProperty("--rtcl-border-active");
+      root.style.removeProperty("--rtcl-accent");
+    };
   }, []);
 
   return (
     <>
+      {/* subtle gradient (optional – hook up your CSS classes if you already had them) */}
       <div
         className="rtcl-backdrop"
         aria-hidden="true"

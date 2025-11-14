@@ -4,7 +4,12 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+  extend: {
+    fontFamily: {
+      sans: ['var(--font-roboto-mono)', 'Roboto Mono', 'monospace'],
+      mono: ['var(--font-roboto-mono)', 'Roboto Mono', 'monospace'],
+    },
+  },
   },
   plugins: [],
 };

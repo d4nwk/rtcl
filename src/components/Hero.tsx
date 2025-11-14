@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Greeting from "./Greeting";
+import { LANGUAGES_THEME_STYLES } from "@/themes/LanguagesTheme";
+import { applyDefaultTheme } from "@/themes/DefaultTheme";
 
 export default function Hero({ items, onOpen, userName }:{
   items: any[];
@@ -18,7 +20,12 @@ export default function Hero({ items, onOpen, userName }:{
   }, [items.length]);
 
   return (
-    <div className="relative rounded-2xl bg-white shadow-sm ring-1 ring-black/5 overflow-hidden mb-8">
+    <div
+      className="relative rounded-2xl bg-white border overflow-hidden mb-8 transition-colors duration-200"
+      style={{
+        borderColor: "var(--rtcl-border-active)"
+      }}
+    >
       <div id="recWindow" className="relative h-[300px] md:h-[360px]">
         <div className="flex h-full transition-transform duration-500 ease-out" style={{transform:`translateX(-${index*100}%)`}}>
           {items.map((it, i)=>(
@@ -31,7 +38,7 @@ export default function Hero({ items, onOpen, userName }:{
                         {it._favicon ? <img src={it._favicon} className="h-4 w-4 rounded" alt="" /> : null}
                         <span>{new Date(it.pubDate||Date.now()).toLocaleDateString()}</span>
                       </div>
-                      <h3 className="text-2xl md:text-4xl font-semibold leading-tight">{it.title}</h3>
+                      <h3 className="text-2xl md:text-4xl font-[500] leading-tight">{it.title}</h3>
                     </div>
                   </div>
                 </div>
